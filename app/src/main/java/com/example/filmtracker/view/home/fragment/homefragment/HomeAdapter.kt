@@ -22,10 +22,6 @@ class HomeAdapter(
     private var mIsFavoriteList: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    lateinit var binding1: MovieItemBinding
-    lateinit var binding2: MovieItemGridBinding
-    lateinit var binding3: MovieItemLoadBinding
-    lateinit var binding4: MovieItemLoadGridBinding
 
     companion object {
         const val TYPE_LIST = 0
@@ -105,27 +101,23 @@ class HomeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        binding1 = DataBindingUtil.setContentView(Activity(), R.layout.movie_item)
-        binding2 = DataBindingUtil.setContentView(Activity(), R.layout.movie_item_grid)
-        binding3 = DataBindingUtil.setContentView(Activity(), R.layout.movie_item_load)
-        binding4 = DataBindingUtil.setContentView(Activity(), R.layout.movie_item_load_grid)
         return if (viewType == TYPE_LIST) {
             ListViewHolder(
                 mViewClickListener, mlistMovie,
-                binding1
+                MovieItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             )
         } else if (viewType == TYPE_GRID) {
             GridViewHolder(
                 mlistMovie,
-                binding2
+                MovieItemGridBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             )
         } else if (viewType == TYPE_LOADING_LIST) {
             LoadListViewHolder(
-                binding3
+                MovieItemLoadBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             )
         } else {
             LoadGridViewHolder(
-                binding4
+                MovieItemLoadGridBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             )
         }
     }

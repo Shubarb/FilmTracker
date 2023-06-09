@@ -40,7 +40,7 @@ class HomeFragment(
     private lateinit var mApiDatasource: ApiDataSource
     private lateinit var mDatabase: MovieDatabase
     private lateinit var mMovieListType: String
-    private var mPage = 0
+    private var mPage = 1
     private var isLoadMore: Boolean = false
     private var isRefresh: Boolean = false
 
@@ -119,7 +119,7 @@ class HomeFragment(
     }
 
     private fun initView() {
-        if(mScreenType == 0){
+        if(mScreenType == 1){
             binding.listRecyclerview.layoutManager = mLinearLayoutManager
         }else{
             binding.listRecyclerview.layoutManager = mGridLayoutManager
