@@ -1,11 +1,12 @@
 package com.example.filmtracker.view.home.fragment.homefragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -21,12 +22,18 @@ import com.example.filmtracker.models.Constant
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
 import com.example.filmtracker.network.*
+import com.example.filmtracker.view.home.fragment.BadgeListener
+import com.example.filmtracker.view.home.fragment.detailfragment.DetailFragment
+import com.example.filmtracker.view.home.fragment.detailfragment.DetailListener
+import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModel
+import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModelFactory
 
 class HomeFragment(
-    private var mScreenType: Int
+    private var mScreenType: Int,
+    private var mDatabaseOpenHelper: DataBaseOpenHelper
 ) : Fragment(),View.OnClickListener  {
 
-    private lateinit var mDatabaseOpenHelper: DataBaseOpenHelper
+//    private lateinit var mDatabaseOpenHelper: DataBaseOpenHelper
     private lateinit var mMovieList: ArrayList<Movie>
     private var mIsGridview: Boolean = false
     private lateinit var binding: FragmentHomeBinding
@@ -37,19 +44,51 @@ class HomeFragment(
     private lateinit var homeViewModel : HomeViewModel
     private lateinit var mApiSerVice: ApiService
     private lateinit var mApiRepo: ApiRepo
+    private lateinit var mHandler: Handler
     private lateinit var mApiDatasource: ApiDataSource
     private lateinit var mDatabase: MovieDatabase
     private lateinit var mMovieListType: String
     private var mPage = 1
-    private var isLoadMore: Boolean = false
-    private var isRefresh: Boolean = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
+    private lateinit var convertType: String
+    private lateinit var mHomeListener: HomeListener
+    private lateinit var mBadgeListener: BadgeListener
+    private lateinit var mDetailListener: DetailListener
+//    private lateinit var mReminderListener: ReminderListener
+    private val noteViewModel: MovieViewModel by lazy {
+        ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(MovieViewModel::class.java)
     }
+
+    fun setBadgeListener(badgeListener: BadgeListener){
+        mBadgeListener = badgeListener
+        Log.e("eee","callBadgeListener")
+    }
+
+    fun setHomeListener(homeListener: HomeListener){
+        mHomeListener = homeListener
+        Log.e("eee","callHomeListener")
+    }
+
+    fun setDetailListener(detailListener: DetailListener) {
+        mDetailListener = detailListener
+    }
+
+    fun updateMovieList(movie: Movie,isFavorite:Boolean){
+        mMovieList[findById(movie.id!!)].isFavorite = isFavorite
+        mHomeAdapter.notifyDataSetChanged()
+    }
+
+//    fun setReminderListener(reminderListener: ReminderListener){
+//        this.mReminderListener = reminderListener
+//    }
+
+//    fun setListMovieByCondition(){
+//        loadDataBySetting()
+//        updateMovieList()
+//        mHandler.postDelayed({
+//            getListMovieFromApi(false,false)
+//        },1000)
+//
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +100,7 @@ class HomeFragment(
         val sharedPreferencesDefault = PreferenceManager.getDefaultSharedPreferences(requireContext())
         mMovieListType =
             sharedPreferencesDefault.getString(Constant.PREF_CATEGORY_KEY, "upcoming").toString()
-        val convertType: String = when (mMovieListType) {
+        convertType = when (mMovieListType) {
             "Top rated movies" -> "top_rate"
             "Up coming movies" -> "upcoming"
             else -> "now_playing"
@@ -73,11 +112,14 @@ class HomeFragment(
         val factory = HomeViewModelFactory(mApiRepo, mDatabase)
         homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
         mDatabaseOpenHelper = DataBaseOpenHelper(requireContext(), "movie_database", null, 1)
-
+        mHandler = Handler(Looper.getMainLooper())
         mMovieList = ArrayList()
-        mHomeAdapter = HomeAdapter(mMovieList,mViewType,this,false)
+        mHomeAdapter = HomeAdapter(mMovieList,mViewType,this,onClickitem,false)
         mLinearLayoutManager = LinearLayoutManager(activity)
         mGridLayoutManager = GridLayoutManager(activity,2)
+
+        homeViewModel.getAllMovie(convertType, Constants.API_KEY,"$mPage")
+        homeViewModel.getAllData()
 
         initView()
         initObserve()
@@ -85,6 +127,24 @@ class HomeFragment(
         SearchClickListener()
         TypeViewCLickListener()
 
+        mHandler.postDelayed({
+            getListMovieFromApi(false,false)
+        },1000)
+
+        binding.swipeLayout.setOnRefreshListener {
+            mHandler.postDelayed({
+                initView()
+                getListMovieFromApi(true,false)
+            },1000)
+        }
+
+        loadMore()
+        return rootView
+    }
+
+
+    private fun getListMovieFromApi(isRefresh: Boolean,isLoadMore: Boolean){
+        mHomeAdapter.removeItemLoading()
         if(isLoadMore){
             mPage += 1
         }else{
@@ -93,8 +153,13 @@ class HomeFragment(
             }
         }
         homeViewModel.getAllMovie(convertType, Constants.API_KEY,"$mPage")
-        homeViewModel.getAllData()
-        return rootView
+        if(!isLoadMore && !isRefresh){
+            binding.progressBar.visibility = View.GONE
+        }
+        if(isRefresh){
+            binding.swipeLayout.isRefreshing = false
+        }
+        mHomeAdapter.setupMovieFavorite(mMovieList)
     }
 
     private fun initObserve() {
@@ -104,21 +169,30 @@ class HomeFragment(
                     Log.e("log", "... Loading ...")
                 }
                 Resource.Status.FAILED -> {
+
                     Toast.makeText(requireContext(), "Error:${it.message}", Toast.LENGTH_SHORT).show()
                 }
                 Resource.Status.SUCCESS -> {
                     val listMovie = it.data!!.result // ArrayList<Character>
                     mMovieList.addAll(listMovie)
+                    if(mPage< it.data.totalPages){
+                        val loadMoreItem =
+                            Movie(0,"0","0",0.0,"0","0",false,false,"0","0",false)
+                        mMovieList.add(loadMoreItem)
+                    }
                     mHomeAdapter.notifyDataSetChanged()
+
                 }
             }
         }
         homeViewModel.listState.observe(requireActivity()){
-//            binding.txtTitle.text = "Size: ${it.size}"
+
         }
+
     }
 
     private fun initView() {
+        mPage = 1
         if(mScreenType == 1){
             binding.listRecyclerview.layoutManager = mLinearLayoutManager
         }else{
@@ -126,6 +200,7 @@ class HomeFragment(
         }
         binding.listRecyclerview.setHasFixedSize(true)
         binding.listRecyclerview.adapter = mHomeAdapter
+
     }
 
     private fun TypeViewCLickListener() {
@@ -138,6 +213,18 @@ class HomeFragment(
             }
             changeViewHome()
         }
+    }
+
+    private fun findById(id:Int):Int{
+        var position = -1
+        val size = mMovieList.size
+        for(i in 0 until size){
+            if(mMovieList[i].id == id){
+                position = i
+                break
+            }
+        }
+        return position
     }
 
     private fun changeViewHome() {
@@ -165,8 +252,65 @@ class HomeFragment(
         }
     }
 
-    override fun onClick(p0: View?) {
+    private fun isLastItemDisplaying(recyclerView: RecyclerView): Boolean{
+        if(recyclerView.adapter!!.itemCount !=0){
+            val lastVisibleItemPosition =
+                (recyclerView.layoutManager as LinearLayoutManager)!!.findLastCompletelyVisibleItemPosition()
+            if(lastVisibleItemPosition!=RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.adapter!!
+                    .itemCount -1
+            )return true
+        }
+        return false
+    }
 
+    private fun loadMore(){
+        binding.listRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if(isLastItemDisplaying(recyclerView)){
+                    mHandler.postDelayed({
+                        getListMovieFromApi(false,true)
+                    },1000)
+                }
+            }
+        })
+    }
+
+    private val onClickitem: (Movie)-> Unit = {
+        if(it.isFavorite!!){
+            noteViewModel.deleteNote(it)
+            Toast.makeText(requireContext(),"delete ${it.title}",Toast.LENGTH_SHORT).show()
+            it.isFavorite = false
+        }else{
+            noteViewModel.insertNote(it)
+            Toast.makeText(requireContext(),"insert ${it.title}",Toast.LENGTH_SHORT).show()
+            it.isFavorite = true
+        }
+        mHomeAdapter.notifyDataSetChanged()
+
+    }
+
+    override fun onClick(p0: View) {
+        when(p0.id){
+            R.id.movie_item -> {
+                val position = p0.tag as Int
+                val movieDetail: Movie = mMovieList[position]
+                val bundle= Bundle()
+                bundle.putSerializable("movieDetail",movieDetail)
+                val detailFragment = DetailFragment(mDatabaseOpenHelper)
+//                detailFragment.setDetailListener(mDetailListener)
+//                detailFragment.setBadgeListener(mBadgeListener)
+//                detailFragment.setRemindListener(mReminderListener)
+                detailFragment.arguments = bundle
+//                mMovieDetailFragment.arguments = bundle
+                requireActivity().supportFragmentManager.beginTransaction().apply {
+                    add(R.id.frg_home,detailFragment,Constant.FRAGMENT_DETAIL_TAG)
+                    addToBackStack(null)
+                    commit()
+//                    mHomeListener.onUpdateTitleMovie(movieDetail.title,true)
+                }
+            }
+        }
     }
 
 

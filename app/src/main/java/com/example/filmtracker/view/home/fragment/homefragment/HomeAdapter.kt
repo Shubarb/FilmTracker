@@ -1,16 +1,14 @@
 package com.example.filmtracker.view.home.fragment.homefragment
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filmtracker.R
-import com.example.filmtracker.databinding.*
+import com.example.filmtracker.databinding.MovieItemBinding
+import com.example.filmtracker.databinding.MovieItemGridBinding
+import com.example.filmtracker.databinding.MovieItemLoadBinding
+import com.example.filmtracker.databinding.MovieItemLoadGridBinding
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
 import com.squareup.picasso.Picasso
@@ -19,10 +17,9 @@ class HomeAdapter(
     private var mlistMovie: MutableList<Movie>,
     private var mViewType: Int,
     private var mViewClickListener: View.OnClickListener,
+    private val onClick: (Movie) -> Unit,
     private var mIsFavoriteList: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-
     companion object {
         const val TYPE_LIST = 0
         const val TYPE_GRID = 1
@@ -50,7 +47,7 @@ class HomeAdapter(
         for (i in 0 until mlistMovie.size) {
             for (j in 0 until listMovieFav.size) {
                 if (mlistMovie[i].id == listMovieFav[j].id) {
-                    mlistMovie[i].isFavorite = true
+                    mlistMovie[i].isFavorite = false
                 }
             }
 
@@ -64,7 +61,7 @@ class HomeAdapter(
         sortBy: String
     ) {
 
-        listMovie.removeAll { it.voteAverage < rate }
+        listMovie.removeAll { it.voteAverage!! < rate }
 
         val convertYear: Int? = if (releaseYear.length > 3) {
             releaseYear.substring(0, 4).trim().toIntOrNull()
@@ -74,7 +71,7 @@ class HomeAdapter(
 
         if (convertYear != null) {
             listMovie.removeAll {
-                it.releaseDate.substring(0, 4).trim() != releaseYear
+                it.releaseDate!!.substring(0, 4).trim() != releaseYear
             }
         }
 
@@ -103,7 +100,7 @@ class HomeAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_LIST) {
             ListViewHolder(
-                mViewClickListener, mlistMovie,
+                 mlistMovie,
                 MovieItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             )
         } else if (viewType == TYPE_GRID) {
@@ -144,8 +141,7 @@ class HomeAdapter(
         }
     }
 
-    class ListViewHolder(
-        private var mViewClickListener: View.OnClickListener,
+    inner class ListViewHolder(
         private var movieList: MutableList<Movie>,
         private var binding: MovieItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -156,23 +152,28 @@ class HomeAdapter(
             Picasso.get().load(urlImage).into(binding.imgMovie)
             binding.tvDate.text = movie.releaseDate
             "${movie.voteAverage}/10".also { binding.tvRate.text = it }
-            if (movie.adult) {
+            if (movie.adult!!) {
                 binding.imgAdult.visibility = View.VISIBLE
             } else {
                 binding.imgAdult.visibility = View.GONE
             }
             binding.tvOverview.text = movie.overview
-            if (movie.isFavorite) {
+            if (movie.isFavorite!!) {
                 binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_rate_24)
             } else {
                 binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_outline_24)
             }
             binding.imgBtn.tag = position
-            binding.imgBtn.setOnClickListener(mViewClickListener)
+            binding.imgBtn.setOnClickListener{
+                onClick(movie)
+            }
+
         }
     }
 
     class LoadListViewHolder(private var binding: MovieItemLoadBinding) : RecyclerView.ViewHolder(binding.root)
 
     class LoadGridViewHolder(private var binding: MovieItemLoadGridBinding) : RecyclerView.ViewHolder(binding.root)
+
+
 }

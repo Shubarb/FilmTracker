@@ -79,7 +79,7 @@ class DataBaseOpenHelper(
         contentValues.put(MOVIE_RATING, movie.voteAverage)
         contentValues.put(MOVIE_DATE, movie.releaseDate)
         contentValues.put(MOVIE_IMAGE_POSTER, movie.posterPath)
-        if(movie.adult){
+        if(movie.adult!!){
             contentValues.put(MOVIE_ADULT,0)
         }else{
             contentValues.put(MOVIE_ADULT,1)
@@ -99,12 +99,12 @@ class DataBaseOpenHelper(
         contentValues.put(MOVIE_RATING, movie.voteAverage)
         contentValues.put(MOVIE_DATE, movie.releaseDate)
         contentValues.put(MOVIE_IMAGE_POSTER, movie.posterPath)
-        if(movie.adult){
+        if(movie.adult!!){
             contentValues.put(MOVIE_ADULT,0)
         }else{
             contentValues.put(MOVIE_ADULT,1)
         }
-        if(movie.isFavorite)
+        if(movie.isFavorite!!)
             contentValues.put(MOVIE_FAVORITE,0)
         else
             contentValues.put(MOVIE_FAVORITE,1)
@@ -129,67 +129,67 @@ class DataBaseOpenHelper(
         return success
     }
 
-    fun getListMovie() : ArrayList<Movie>{
-        val listMovie: ArrayList<Movie> = ArrayList()
-        val selectQuery = "SELECT * FROM $MOVIE_TABLE"
-        val db = this.readableDatabase
-        val cursor : Cursor
-        var movie: Movie
-        try {
-            cursor = db.rawQuery(selectQuery,null)
-        }catch (e: SQLiteException){
-            db.execSQL(selectQuery)
-            return ArrayList()
-        }
-        if(cursor.moveToFirst()){
-            do{
-                movie = Movie(
-                    cursor.getInt(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getDouble(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getInt(6) == 0,
-                    cursor.getInt(7) == 0
-                )
-                listMovie.add(movie)
-            }while (cursor.moveToNext())
-        }
-        return listMovie
-    }
+//    fun getListMovie() : ArrayList<Movie>{
+//        val listMovie: ArrayList<Movie> = ArrayList()
+//        val selectQuery = "SELECT * FROM $MOVIE_TABLE"
+//        val db = this.readableDatabase
+//        val cursor : Cursor
+//        var movie: Movie
+//        try {
+//            cursor = db.rawQuery(selectQuery,null)
+//        }catch (e: SQLiteException){
+//            db.execSQL(selectQuery)
+//            return ArrayList()
+//        }
+//        if(cursor.moveToFirst()){
+//            do{
+//                movie = Movie(
+//                    cursor.getInt(0),
+//                    cursor.getString(1),
+//                    cursor.getString(2),
+//                    cursor.getDouble(3),
+//                    cursor.getString(4),
+//                    cursor.getString(5),
+//                    cursor.getInt(6) == 0,
+//                    cursor.getInt(7) == 0
+//                )
+//                listMovie.add(movie)
+//            }while (cursor.moveToNext())
+//        }
+//        return listMovie
+//    }
 
-    fun checkReminderExist(movieId:Int): Int{
-        var listMovie: ArrayList<Movie> = ArrayList()
-        val selectQuery =
-            "SELECT * FROM $REMINDER_TABLE WHERE $MOVIE_ID = $movieId"
-        val db = this.readableDatabase
-        val cursor : Cursor
-        var movie: Movie
-        try {
-            cursor = db.rawQuery(selectQuery,null)
-        }catch (e: SQLiteException){
-            db.execSQL(selectQuery)
-            return 0
-        }
-        if(cursor.moveToFirst()){
-            do{
-                movie = Movie(
-                    cursor.getInt(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getDouble(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getInt(6) == 0,
-                    cursor.getInt(7) == 0
-                )
-                listMovie.add(movie)
-                if(listMovie.size > 0) return 1
-            }while (cursor.moveToNext())
-        }
-        return 0
-    }
+//    fun checkReminderExist(movieId:Int): Int{
+//        var listMovie: ArrayList<Movie> = ArrayList()
+//        val selectQuery =
+//            "SELECT * FROM $REMINDER_TABLE WHERE $MOVIE_ID = $movieId"
+//        val db = this.readableDatabase
+//        val cursor : Cursor
+//        var movie: Movie
+//        try {
+//            cursor = db.rawQuery(selectQuery,null)
+//        }catch (e: SQLiteException){
+//            db.execSQL(selectQuery)
+//            return 0
+//        }
+//        if(cursor.moveToFirst()){
+//            do{
+//                movie = Movie(
+//                    cursor.getInt(0),
+//                    cursor.getString(1),
+//                    cursor.getString(2),
+//                    cursor.getDouble(3),
+//                    cursor.getString(4),
+//                    cursor.getString(5),
+//                    cursor.getInt(6) == 0,
+//                    cursor.getInt(7) == 0
+//                )
+//                listMovie.add(movie)
+//                if(listMovie.size > 0) return 1
+//            }while (cursor.moveToNext())
+//        }
+//        return 0
+//    }
 
     fun getListReminder() : ArrayList<Movie>{
         val listMovie: ArrayList<Movie> = ArrayList()
@@ -256,63 +256,63 @@ class DataBaseOpenHelper(
 
     }
 
-    fun getListMovieByCondition(
-        rate: String,
-        releaseYear: String,
-        sortBy: String
-    ): ArrayList<Movie>{
-        var listMovie: ArrayList<Movie> = ArrayList()
-        var condition = ""
-        if(rate != "" || releaseYear != "" || sortBy != ""){
-            condition += "WHERE "
-        }
-        if(rate != "") condition += "$MOVIE_RATING <= rate"
-        if(releaseYear != "") condition += "AND $MOVIE_DATE LIKE %$releaseYear%"
-        if(sortBy != "") condition += "ORDER BY $sortBy ASC"
-        val selectQuery = "SELECT * FROM $MOVIE_TABLE $condition"
-        val db = this.readableDatabase
-        val cursor: Cursor
-        var movie: Movie
-        try {
-            cursor = db.rawQuery(selectQuery,null)
-        }catch (e: SQLiteException){
-            db.execSQL(selectQuery)
-            return ArrayList()
-        }
-        if(cursor.moveToFirst()){
-            do{
-                movie = Movie(
-                    cursor.getInt(0),
-                    cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getDouble(3),
-                    cursor.getString(4),
-                    cursor.getString(5),
-                    cursor.getInt(6) == 0,
-                    cursor.getInt(7) == 0
-                )
-                listMovie.add(movie)
-            }while (cursor.moveToNext())
-        }
-        return listMovie
-    }
+//    fun getListMovieByCondition(
+//        rate: String,
+//        releaseYear: String,
+//        sortBy: String
+//    ): ArrayList<Movie>{
+//        var listMovie: ArrayList<Movie> = ArrayList()
+//        var condition = ""
+//        if(rate != "" || releaseYear != "" || sortBy != ""){
+//            condition += "WHERE "
+//        }
+//        if(rate != "") condition += "$MOVIE_RATING <= rate"
+//        if(releaseYear != "") condition += "AND $MOVIE_DATE LIKE %$releaseYear%"
+//        if(sortBy != "") condition += "ORDER BY $sortBy ASC"
+//        val selectQuery = "SELECT * FROM $MOVIE_TABLE $condition"
+//        val db = this.readableDatabase
+//        val cursor: Cursor
+//        var movie: Movie
+//        try {
+//            cursor = db.rawQuery(selectQuery,null)
+//        }catch (e: SQLiteException){
+//            db.execSQL(selectQuery)
+//            return ArrayList()
+//        }
+//        if(cursor.moveToFirst()){
+//            do{
+//                movie = Movie(
+//                    cursor.getInt(0),
+//                    cursor.getString(1),
+//                    cursor.getString(2),
+//                    cursor.getDouble(3),
+//                    cursor.getString(4),
+//                    cursor.getString(5),
+//                    cursor.getInt(6) == 0,
+//                    cursor.getInt(7) == 0
+//                )
+//                listMovie.add(movie)
+//            }while (cursor.moveToNext())
+//        }
+//        return listMovie
+//    }
 
-    fun deleteMovie(id: Int):Int{
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(MOVIE_ID,id)
-        val success = db.delete(MOVIE_TABLE,"$MOVIE_ID = $id", null)
-        db.close()
-        return success
-    }
+//    fun deleteMovie(id: Int):Int{
+//        val db = this.writableDatabase
+//        val contentValues = ContentValues()
+//        contentValues.put(MOVIE_ID,id)
+//        val success = db.delete(MOVIE_TABLE,"$MOVIE_ID = $id", null)
+//        db.close()
+//        return success
+//    }
 
-    fun deleteReminderByMovieId(id: Int): Int{
-        val db = this.writableDatabase
-        val contentValues = ContentValues()
-        contentValues.put(MOVIE_ID,id)
-        val success =
-            db.delete(REMINDER_TABLE,"$MOVIE_ID = $id ", null)
-        db.close()
-        return success
-    }
+//    fun deleteReminderByMovieId(id: Int): Int{
+//        val db = this.writableDatabase
+//        val contentValues = ContentValues()
+//        contentValues.put(MOVIE_ID,id)
+//        val success =
+//            db.delete(REMINDER_TABLE,"$MOVIE_ID = $id ", null)
+//        db.close()
+//        return success
+//    }
 }

@@ -29,7 +29,7 @@ class HomeViewModel(private val apiRepo: ApiRepo,private val db:MovieDatabase): 
                     if (it.data!= null){
                         Log.e("log","Call Data Success Data Khác Null")
                         _stateListMovie.value = Resource.success(it.data)
-                        addItem(it.data.result)
+//                        addItem(it.data.result)
                     }else{
                         Log.e("log","Call Data Success Data = Null")
                         _stateListMovie.value = Resource.failed(msg = "${it.message}")
@@ -43,17 +43,12 @@ class HomeViewModel(private val apiRepo: ApiRepo,private val db:MovieDatabase): 
         }
     }
 
-    fun getAllData() {
+    fun getAllData(){
         viewModelScope.launch {
             _listState.value = db.movieDao().getAllData()
         }
     }
-    fun addItem(result: List<Movie>) {
-        viewModelScope.launch {
-            db.movieDao().addItems(result)
-            getAllData()
-        }
-    }
+
 
 
 }
