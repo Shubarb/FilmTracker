@@ -162,6 +162,7 @@ class HomeFragment(
                     }
                     mHomeAdapter.notifyDataSetChanged()
 
+
                 }
             }
         }

@@ -19,6 +19,7 @@ class FavoriteFragment(
 //    private lateinit var mMovieAdapter: FavoriteAdapter
     private lateinit var mBadgeListener: BadgeListener
     private lateinit var mHomeFavoriteListener: FavoriteListener
+    var count = 1
     private val movieViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(MovieViewModel::class.java)
     }
