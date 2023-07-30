@@ -33,12 +33,16 @@ class MovieViewModel(app: Application) : ViewModel() {
         noteRepository.deleteMovieFavourite(note)
     }
 
-    //    fun getAllNote(): LiveData<List<Movie>> = noteRepository.getAllNote()
     fun getAllNote() {
         viewModelScope.launch {
             movieState.value = noteRepository.getAllNote()
         }
 
     }
-//    fun getCount(): Int = noteRepository.getCount()
+
+    fun getFavo(){
+        viewModelScope.launch {
+            movieState.value = noteRepository.getFavorite()
+        }
+    }
 }

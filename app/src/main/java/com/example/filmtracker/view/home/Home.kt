@@ -1,25 +1,19 @@
 package com.example.filmtracker.view.home
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.filmtracker.R
-import com.example.filmtracker.database.DataBaseOpenHelper
 import com.example.filmtracker.databinding.ActivityHomeBinding
-import com.example.filmtracker.models.Constant
 import com.example.filmtracker.models.Movie
 import com.example.filmtracker.view.home.fragment.BadgeListener
 import com.example.filmtracker.view.home.fragment.accountfragment.AccountFragment
-import com.example.filmtracker.view.home.fragment.detailfragment.DetailFragment
 import com.example.filmtracker.view.home.fragment.detailfragment.DetailListener
 import com.example.filmtracker.view.home.fragment.favoritefragment.FavoriteFragment
 import com.example.filmtracker.view.home.fragment.favoritefragment.FavoriteListener
@@ -29,9 +23,10 @@ import com.example.filmtracker.view.home.fragment.homefragment.HomeFragment
 import com.example.filmtracker.view.home.fragment.homefragment.HomeListener
 import com.example.filmtracker.view.home.fragment.messagefragment.MessageFragment
 import com.example.filmtracker.view.home.fragment.settingfragment.SettingFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,DetailListener {
+class Home : AppCompatActivity()
+//    ,HomeListener,BadgeListener,FavoriteListener,DetailListener
+{
 
     lateinit var binding: ActivityHomeBinding
     private lateinit var mDrawerLayout: DrawerLayout
@@ -43,7 +38,7 @@ class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,Det
     private lateinit var mSettingFragment: SettingFragment
 
     private lateinit var mMovieFavoriteList: List<Movie>
-    private var mDatabaseOpenHelper: DataBaseOpenHelper? = null
+//    private var mDatabaseOpenHelper: DataBaseOpenHelper? = null
     private var ID_Home = 1
     private var ID_Favorite = 2
     private var ID_Message = 3
@@ -63,22 +58,22 @@ class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,Det
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        mDatabaseOpenHelper = DataBaseOpenHelper(this, "movie_database", null, 1)
+//        mDatabaseOpenHelper = DataBaseOpenHelper(this, "movie_database", null, 1)
 //        mMovieFavoriteList = mDatabaseOpenHelper!!.getListMovie()
         //Fragment view
-        mHomeFragment = HomeFragment(1,mDatabaseOpenHelper!!)
+        mHomeFragment = HomeFragment(1)
         mfavoriteFragment = FavoriteFragment()
         mMessageFragment = MessageFragment()
         mSettingFragment = SettingFragment()
         mAccountFragment = AccountFragment()
         //callback fragment
-        mHomeFragment.setBadgeListener(this)
-        mHomeFragment.setHomeListener(this)
+//        mHomeFragment.setBadgeListener(this)
+//        mHomeFragment.setHomeListener(this)
 //        mHomeFragment.setDetailListener(this)
 //        mHomeFragment.setReminderListener(this)
 
-        mfavoriteFragment.setBadgeListener(this)
-        mfavoriteFragment.setFavoriteListener(this)
+//        mfavoriteFragment.setBadgeListener(this)
+//        mfavoriteFragment.setFavoriteListener(this)
 
 
 //        mMovieFavoriteList = mDatabaseOpenHelper!!.getListMovie()
@@ -135,7 +130,7 @@ class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,Det
     }
 
     private fun showFirstFragment() {
-        replace(HomeFragment(1,mDatabaseOpenHelper!!))
+        replace(HomeFragment(1))
         binding.bottomNavigation.show(ID_Home, true)
     }
 
@@ -144,7 +139,7 @@ class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,Det
 //            Toast.makeText(this,name,Toast.LENGTH_SHORT).show()
             when (it.id) {
                 ID_Home -> {
-                    replace(HomeFragment(1,mDatabaseOpenHelper!!))
+                    replace(HomeFragment(1))
                 }
                 ID_Favorite -> {
                     replace(FavoriteFragment())
@@ -208,30 +203,30 @@ class Home : AppCompatActivity(),HomeListener,BadgeListener,FavoriteListener,Det
         binding.bottomNavigation.setCount(ID_Favorite, "${mFavoriteCount}")
     }
 
-    override fun onUpdateBadgeNumber(isFavorite: Boolean) {
-        if (isFavorite)
-            binding.bottomNavigation.setCount(ID_Favorite, "${++mFavoriteCount}")
-        else
-            binding.bottomNavigation.setCount(ID_Favorite, "${--mFavoriteCount}")
-    }
+//    override fun onUpdateBadgeNumber(isFavorite: Boolean) {
+//        if (isFavorite)
+//            binding.bottomNavigation.setCount(ID_Favorite, "${++mFavoriteCount}")
+//        else
+//            binding.bottomNavigation.setCount(ID_Favorite, "${--mFavoriteCount}")
+//    }
 
-    override fun onUpdateFromDetail(movie: Movie, isFavorite: Boolean) {
+//    override fun onUpdateFromDetail(movie: Movie, isFavorite: Boolean) {
 //        mHomeFragment.updateMovieList(movie, isFavorite)
 //        mfavoriteFragment.updateFavoriteList(movie, isFavorite)
-    }
+//    }
 
-    override fun onAddReminder() {
+//    override fun onAddReminder() {
 //        mMovieReminderList = mDatabaseOpenHelper.getListReminder()
 //        mReminderAdapter.updateData(mMovieReminderList)
-    }
+//    }
 
 
-    override fun onUpdateFromFavorite(movie: Movie) {
-        mHomeFragment.updateMovieList(movie, false)
-    }
-
-    override fun onUpdateFromMovie(movie: Movie, isFavorite: Boolean) {
+//    override fun onUpdateFromFavorite(movie: Movie) {
+//        mHomeFragment.updateMovieList(movie, false)
+//    }
+//
+//    override fun onUpdateFromMovie(movie: Movie, isFavorite: Boolean) {
 //        mfavoriteFragment.updateFavoriteList(movie, isFavorite)
-    }
+//    }
 
 }

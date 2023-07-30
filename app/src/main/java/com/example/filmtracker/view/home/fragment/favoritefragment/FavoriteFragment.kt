@@ -57,6 +57,7 @@ class FavoriteFragment(
 //        })
         movieViewModel.movieState.observe(requireActivity()){
             mMovieAdapter.setNotes(it)
+            mMovieAdapter.notifyDataSetChanged()
         }
     }
 

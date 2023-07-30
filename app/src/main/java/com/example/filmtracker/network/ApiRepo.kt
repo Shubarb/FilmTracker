@@ -1,7 +1,11 @@
 package com.example.filmtracker.network
 
+import android.app.Application
 import android.util.Log
+import com.example.filmtracker.database.MovieDao
+import com.example.filmtracker.database.MovieDatabase
 import com.example.filmtracker.models.CastAndCrewList
+import com.example.filmtracker.models.Movie
 import com.example.filmtracker.models.MovieList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +14,19 @@ import kotlinx.coroutines.flow.flowOn
 import retrofit2.Call
 import retrofit2.Response
 
-class ApiRepo(private val apiDataSource: ApiDataSource) {
+class ApiRepo(
+    application: Application
+    ){
+    private val mApiSerVice: ApiService = GetRetrofit().getInstance().create(ApiService::class.java)
+    private val apiDataSource: ApiDataSource =ApiDataSource(mApiSerVice)
+    private val homeDao: MovieDao
+    init {
+        val homeData: MovieDatabase = MovieDatabase.getInstance(application)
+        homeDao = homeData.movieDao()
+    }
+
+    suspend fun addMovie(listmovie: Movie) = homeDao.addItems(listmovie)
+    suspend fun deleteMovie(listmovie: Movie) = homeDao.deleteItem(listmovie)
 
     suspend fun getAllMovie(
         movieCategory: String,

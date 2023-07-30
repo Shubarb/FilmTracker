@@ -7,7 +7,7 @@ import com.example.filmtracker.models.Movie
 @Dao
 interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addItems(movie: List<Movie>)
+    suspend fun addItems(movie: Movie)
 
     @Delete
     suspend fun deleteItem(movie: Movie)

@@ -1,16 +1,15 @@
 package com.example.filmtracker.view.home.fragment.detailfragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.filmtracker.R
-import com.example.filmtracker.database.DataBaseOpenHelper
+import androidx.fragment.app.Fragment
 import com.example.filmtracker.databinding.FragmentDetailBinding
-import com.example.filmtracker.databinding.FragmentHomeBinding
 
-class DetailFragment(private var mDataBaseOpenHelper: DataBaseOpenHelper) : Fragment(),View.OnClickListener {
+class DetailFragment(
+//    private var mDataBaseOpenHelper: DataBaseOpenHelper
+    ) : Fragment(),View.OnClickListener {
 
     private lateinit var binding: FragmentDetailBinding
 

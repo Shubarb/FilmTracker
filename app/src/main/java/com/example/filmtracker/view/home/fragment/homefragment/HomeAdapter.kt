@@ -165,9 +165,9 @@ class HomeAdapter(
             }
             binding.imgBtn.tag = position
             binding.imgBtn.setOnClickListener{
+                movie.isFavorite != movie.isFavorite
                 onClick(movie)
             }
-
         }
     }
 
