@@ -12,7 +12,6 @@ import com.example.filmtracker.models.Movie
 import com.squareup.picasso.Picasso
 
 class FavoriteAdapter(
-//    private var mlistMovie: List<Movie>,
     private val context: Context,
     private val onDelete: (Movie) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.MovieViewHolder>() {

@@ -1,7 +1,6 @@
 package com.example.filmtracker.view.home.fragment.favoritefragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,15 +10,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmtracker.databinding.FragmentFavoriteBinding
 import com.example.filmtracker.models.Movie
-import com.example.filmtracker.view.home.fragment.BadgeListener
 
 class FavoriteFragment(
 ) : Fragment() {
 
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var mMovieAdapter: FavoriteAdapter
-    private lateinit var mHomeFavoriteListener: FavoriteListener
-    var count = 1
     private var listMovie : ArrayList<Movie> = arrayListOf()
 
 

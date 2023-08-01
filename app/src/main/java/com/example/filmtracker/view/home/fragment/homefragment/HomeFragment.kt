@@ -15,14 +15,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filmtracker.R
-import com.example.filmtracker.database.MovieDatabase
 import com.example.filmtracker.databinding.FragmentHomeBinding
 import com.example.filmtracker.models.Constant
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
-import com.example.filmtracker.network.*
-import com.example.filmtracker.view.home.fragment.BadgeListener
-import com.example.filmtracker.view.home.fragment.detailfragment.DetailListener
+import com.example.filmtracker.network.Resource
 import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModel
 import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModelFactory
 
@@ -52,12 +49,6 @@ class HomeFragment(
             HomeViewModel::class.java
         )
     }
-
-//    fun updateMovieList(movie: Movie,isFavorite:Boolean){
-//        mMovieList[findById(movie.id!!)].isFavorite = isFavorite
-//        mHomeAdapter.notifyDataSetChanged()
-//    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
