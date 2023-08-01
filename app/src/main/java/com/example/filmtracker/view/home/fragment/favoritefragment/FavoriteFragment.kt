@@ -15,21 +15,16 @@ import com.example.filmtracker.view.home.fragment.BadgeListener
 
 class FavoriteFragment(
 ) : Fragment() {
+
     private lateinit var binding: FragmentFavoriteBinding
-//    private lateinit var mMovieAdapter: FavoriteAdapter
-    private lateinit var mBadgeListener: BadgeListener
+    private lateinit var mMovieAdapter: FavoriteAdapter
     private lateinit var mHomeFavoriteListener: FavoriteListener
     var count = 1
+    private var listMovie : ArrayList<Movie> = arrayListOf()
+
+
     private val movieViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(MovieViewModel::class.java)
-    }
-    fun setBadgeListener(badgeListener: BadgeListener){
-        mBadgeListener = badgeListener
-        Log.e("eee","call")
-    }
-
-    fun setFavoriteListener(favoriteListener: FavoriteListener){
-        mHomeFavoriteListener = favoriteListener
     }
 
     override fun onCreateView(
@@ -39,31 +34,34 @@ class FavoriteFragment(
         // Inflate the layout for this fragment
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         val rootView = binding.root
-
-        movieViewModel.getAllNote()
-        loadFavoriteList()
-        setHasOptionsMenu(true)
         return rootView
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        movieViewModel.getAllNote()
+        loadFavoriteList()
+        setHasOptionsMenu(true)
+    }
+
     private fun loadFavoriteList(){
-        val mMovieAdapter = FavoriteAdapter(requireActivity(),onDeleteItem)
+        mMovieAdapter = FavoriteAdapter(requireActivity(),onDeleteItem)
         binding.listRecyclerview.layoutManager = LinearLayoutManager(requireActivity())
         binding.listRecyclerview.setHasFixedSize(true)
         binding.listRecyclerview.adapter = mMovieAdapter
-//        movieViewModel.getAllNote().observe(requireActivity(), Observer {
-//            mMovieAdapter.setNotes(it)
-//            val ii = it.size
-//            Toast.makeText(requireContext(),"$ii",Toast.LENGTH_SHORT).show()
-//        })
+
         movieViewModel.movieState.observe(requireActivity()){
             mMovieAdapter.setNotes(it)
             mMovieAdapter.notifyDataSetChanged()
+            listMovie.clear()
+            listMovie.addAll(it)
         }
     }
 
     private val onDeleteItem: (Movie) -> Unit = {
         movieViewModel.deleteNote(it)
+        listMovie.remove(it)
+        mMovieAdapter.setNotes(listMovie)
         Toast.makeText(requireContext(),"delete ${it.title}", Toast.LENGTH_SHORT).show()
     }
 

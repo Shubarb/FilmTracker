@@ -24,10 +24,7 @@ import com.example.filmtracker.view.home.fragment.homefragment.HomeListener
 import com.example.filmtracker.view.home.fragment.messagefragment.MessageFragment
 import com.example.filmtracker.view.home.fragment.settingfragment.SettingFragment
 
-class Home : AppCompatActivity()
-//    ,HomeListener,BadgeListener,FavoriteListener,DetailListener
-{
-
+class Home : AppCompatActivity() {
     lateinit var binding: ActivityHomeBinding
     private lateinit var mDrawerLayout: DrawerLayout
 
@@ -37,18 +34,13 @@ class Home : AppCompatActivity()
     private lateinit var mAccountFragment: AccountFragment
     private lateinit var mSettingFragment: SettingFragment
 
-    private lateinit var mMovieFavoriteList: List<Movie>
-//    private var mDatabaseOpenHelper: DataBaseOpenHelper? = null
     private var ID_Home = 1
     private var ID_Favorite = 2
     private var ID_Message = 3
     private var ID_Account = 4
     private var name = ""
-//    private var count = 0
     var count: Int = 0
 
-    private var mFavoriteCount: Int = 0
-//    private var bottomNavigation: MeowBottomNavigation? = null
     private val movieViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(this.application)).get(
             MovieViewModel::class.java)
@@ -58,37 +50,25 @@ class Home : AppCompatActivity()
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-//        mDatabaseOpenHelper = DataBaseOpenHelper(this, "movie_database", null, 1)
-//        mMovieFavoriteList = mDatabaseOpenHelper!!.getListMovie()
         //Fragment view
         mHomeFragment = HomeFragment(1)
         mfavoriteFragment = FavoriteFragment()
         mMessageFragment = MessageFragment()
         mSettingFragment = SettingFragment()
         mAccountFragment = AccountFragment()
+
         //callback fragment
-//        mHomeFragment.setBadgeListener(this)
-//        mHomeFragment.setHomeListener(this)
-//        mHomeFragment.setDetailListener(this)
-//        mHomeFragment.setReminderListener(this)
 
-//        mfavoriteFragment.setBadgeListener(this)
-//        mfavoriteFragment.setFavoriteListener(this)
-
-
-//        mMovieFavoriteList = mDatabaseOpenHelper!!.getListMovie()
         movieViewModel.countLiveData.observe(this){
             count = it
-
-            Log.e("ww", "thread: ${Thread.currentThread().name}")
+//            Log.e("ww", "thread: ${Thread.currentThread().name}")
             runOnUiThread {
-                Log.e("ww", "thread: ${Thread.currentThread().name}")
-                Log.e("ww", "count in main thread: $count")
+//                Log.e("ww", "thread: ${Thread.currentThread().name}")
+//                Log.e("ww", "count in main thread: $count")
                 binding.bottomNavigation.setCount(ID_Favorite, "$count")
             }
 
         }
-        mFavoriteCount = 5
         BottomNavigation()
         showFirstFragment()
         showListenNameItem()
@@ -97,15 +77,9 @@ class Home : AppCompatActivity()
 
     override fun onResume() {
         super.onResume()
-        val intValueToDisplay: Int = count
-//        mFavoriteCount = intValueToDisplay
-        Log.e("ww","mFavoriteCount = $mFavoriteCount")
+        Log.e("ww","mFavoriteCount = $count")
     }
-//    private fun updateNumber(count: Int?) {
 
-//        Log.e("ww","intValueToDisplay = $intValueToDisplay")
-//
-//    }
 
     private fun showListenNameItem() {
         binding.bottomNavigation.setOnShowListener {
@@ -200,33 +174,8 @@ class Home : AppCompatActivity()
         )
 //        binding.bottomNavigation.setCount(ID_Account, "4")
         binding.bottomNavigation.setCount(ID_Message, "4")
-        binding.bottomNavigation.setCount(ID_Favorite, "${mFavoriteCount}")
+//        binding.bottomNavigation.setCount(ID_Favorite, "${mFavoriteCount}")
     }
 
-//    override fun onUpdateBadgeNumber(isFavorite: Boolean) {
-//        if (isFavorite)
-//            binding.bottomNavigation.setCount(ID_Favorite, "${++mFavoriteCount}")
-//        else
-//            binding.bottomNavigation.setCount(ID_Favorite, "${--mFavoriteCount}")
-//    }
-
-//    override fun onUpdateFromDetail(movie: Movie, isFavorite: Boolean) {
-//        mHomeFragment.updateMovieList(movie, isFavorite)
-//        mfavoriteFragment.updateFavoriteList(movie, isFavorite)
-//    }
-
-//    override fun onAddReminder() {
-//        mMovieReminderList = mDatabaseOpenHelper.getListReminder()
-//        mReminderAdapter.updateData(mMovieReminderList)
-//    }
-
-
-//    override fun onUpdateFromFavorite(movie: Movie) {
-//        mHomeFragment.updateMovieList(movie, false)
-//    }
-//
-//    override fun onUpdateFromMovie(movie: Movie, isFavorite: Boolean) {
-//        mfavoriteFragment.updateFavoriteList(movie, isFavorite)
-//    }
 
 }

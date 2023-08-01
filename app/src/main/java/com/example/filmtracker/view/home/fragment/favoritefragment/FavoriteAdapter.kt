@@ -15,11 +15,11 @@ class FavoriteAdapter(
 //    private var mlistMovie: List<Movie>,
     private val context: Context,
     private val onDelete: (Movie) -> Unit
-) : RecyclerView.Adapter<FavoriteAdapter.MovieViewModel>() {
+) : RecyclerView.Adapter<FavoriteAdapter.MovieViewHolder>() {
 
     private var note: List<Movie> = listOf()
 
-    inner class MovieViewModel(
+    inner class MovieViewHolder(
 //        private var movieList: List<Movie>,
         private var binding: MovieItemBinding
         ) : RecyclerView.ViewHolder(binding.root) {
@@ -51,12 +51,12 @@ class FavoriteAdapter(
 
     override fun getItemCount(): Int = note.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewModel {
-        return MovieViewModel(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        return MovieViewHolder(
             MovieItemBinding.inflate(LayoutInflater.from(context),parent,false))
     }
 
-    override fun onBindViewHolder(holder: MovieViewModel, position: Int) {
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.onBind(note[position],position)
     }
 

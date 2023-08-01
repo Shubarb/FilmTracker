@@ -29,6 +29,7 @@ class HomeAdapter(
 
     fun updateData(listMovie: MutableList<Movie>) {
         this.mlistMovie = listMovie
+        notifyDataSetChanged()
     }
 
     fun setViewType(viewType: Int) {
@@ -158,7 +159,7 @@ class HomeAdapter(
                 binding.imgAdult.visibility = View.GONE
             }
             binding.tvOverview.text = movie.overview
-            if (movie.isFavorite!!) {
+            if (movie.isFavorite) {
                 binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_rate_24)
             } else {
                 binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_outline_24)
