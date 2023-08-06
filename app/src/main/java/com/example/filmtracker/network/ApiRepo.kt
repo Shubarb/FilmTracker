@@ -2,6 +2,7 @@ package com.example.filmtracker.network
 
 import android.app.Application
 import android.util.Log
+import com.example.filmtracker.models.CastAndCrewList
 import com.example.filmtracker.models.MovieList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,15 +30,18 @@ class ApiRepo(
         )
     }
 
-//    suspend fun getAllCastCrew(id:Int,apiKey:String): Flow<Resource<CastAndCrewList>>{
-//        return flow {
-//            emit(safeApi{
-//                apiDataSource.getAllCastCrew(id,apiKey)
-//            })
-//        }.flowOn(
-//            Dispatchers.IO
-//        )
-//    }
+    suspend fun getAllCastCrew(
+        id:Int,
+        apiKey:String
+    ): Flow<Resource<CastAndCrewList>>{
+        return flow {
+            emit(safeApi{
+                apiDataSource.getAllCastCrew(id,apiKey)
+            })
+        }.flowOn(
+            Dispatchers.IO
+        )
+    }
 
     private suspend fun <T> safeApi(apiCall: suspend () -> Response<T>): Resource<T> {
         try {

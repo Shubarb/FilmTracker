@@ -13,8 +13,8 @@ import com.example.filmtracker.R
 import com.example.filmtracker.databinding.ActivityHomeBinding
 import com.example.filmtracker.view.home.fragment.accountfragment.AccountFragment
 import com.example.filmtracker.view.home.fragment.favoritefragment.FavoriteFragment
-import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModel
-import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModelFactory
+import com.example.filmtracker.view.home.fragment.MovieViewModel
+import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
 import com.example.filmtracker.view.home.fragment.homefragment.HomeFragment
 import com.example.filmtracker.view.home.fragment.messagefragment.MessageFragment
 import com.example.filmtracker.view.home.fragment.settingfragment.SettingFragment

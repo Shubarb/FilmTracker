@@ -20,8 +20,9 @@ import com.example.filmtracker.models.Constant
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
 import com.example.filmtracker.network.Resource
-import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModel
-import com.example.filmtracker.view.home.fragment.favoritefragment.MovieViewModelFactory
+import com.example.filmtracker.view.home.fragment.MovieViewModel
+import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
+import com.example.filmtracker.view.home.fragment.detailfragment.DetailFragment
 
 class HomeFragment(
     private var mScreenType: Int
@@ -42,11 +43,6 @@ class HomeFragment(
     private val noteViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(
             MovieViewModel::class.java
-        )
-    }
-    private val homeViewModel: HomeViewModel by lazy {
-        ViewModelProvider(this, HomeViewModelFactory(requireActivity().getApplication())).get(
-            HomeViewModel::class.java
         )
     }
 
@@ -70,7 +66,7 @@ class HomeFragment(
         mHandler = Handler(Looper.getMainLooper())
         mMovieList = ArrayList()
         mMovieListFavorite = ArrayList()
-        mHomeAdapter = HomeAdapter(mMovieList, mViewType, this, onClickitem, false)
+        mHomeAdapter = HomeAdapter(mMovieList, mViewType, this, onClickIconFavorite,onClickMovie, false)
         mLinearLayoutManager = LinearLayoutManager(activity)
         mGridLayoutManager = GridLayoutManager(activity, 2)
         mHandler.postDelayed({
@@ -94,12 +90,6 @@ class HomeFragment(
         return rootView
     }
 
-    override fun onResume() {
-        super.onResume()
-
-
-    }
-
     private fun getListMovieFromApi(isRefresh: Boolean, isLoadMore: Boolean) {
         mHomeAdapter.removeItemLoading()
         if (isLoadMore) {
@@ -109,7 +99,7 @@ class HomeFragment(
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
-        homeViewModel.getAllMovie(convertType, Constants.API_KEY, "$mPage")
+        noteViewModel.getAllMovie(convertType, Constants.API_KEY, "$mPage")
         if (!isLoadMore && !isRefresh) {
             binding.progressBar.visibility = View.GONE
         }
@@ -127,7 +117,7 @@ class HomeFragment(
         }
 
         // Arraylist from call api
-        homeViewModel.stateListMovie.observe(requireActivity()) {
+        noteViewModel.stateListMovie.observe(requireActivity()) {
             when (it.status) {
                 Resource.Status.LOADING -> {
                     Log.e("log", "... Loading ...")
@@ -248,7 +238,7 @@ class HomeFragment(
         })
     }
 
-    private val onClickitem: (Movie) -> Unit = {
+    private val onClickIconFavorite: (Movie) -> Unit = {
         if (it.isFavorite!!) {
             noteViewModel.deleteNote(it)
             Toast.makeText(requireContext(), "delete ${it.title}", Toast.LENGTH_SHORT).show()
@@ -261,28 +251,19 @@ class HomeFragment(
         mHomeAdapter.notifyDataSetChanged()
     }
 
-    override fun onClick(p0: View) {
-        when (p0.id) {
-            R.id.movie_item -> {
-//                val position = p0.tag as Int
-//                val movieDetail: Movie = mMovieList[position]
-//                val bundle= Bundle()
-//                bundle.putSerializable("movieDetail",movieDetail)
-//                val detailFragment = DetailFragment(mDatabaseOpenHelper)
-//                detailFragment.setDetailListener(mDetailListener)
-//                detailFragment.setBadgeListener(mBadgeListener)
-//                detailFragment.setRemindListener(mReminderListener)
-//                detailFragment.arguments = bundle
-//                mMovieDetailFragment.arguments = bundle
-//                requireActivity().supportFragmentManager.beginTransaction().apply {
-//                    add(R.id.frg_home,detailFragment,Constant.FRAGMENT_DETAIL_TAG)
-//                    addToBackStack(null)
-//                    commit()
-//                    mHomeListener.onUpdateTitleMovie(movieDetail.title,true)
-//                }
-            }
+    private val onClickMovie: (Movie) -> Unit ={
+        val bundle= Bundle()
+        bundle.putSerializable("movieDetail",it)
+        val detailFragment = DetailFragment()
+        detailFragment.arguments = bundle
+        requireActivity().supportFragmentManager.beginTransaction().apply {
+            replace(R.id.viewPager,detailFragment,Constant.FRAGMENT_DETAIL_TAG)
+            addToBackStack(null)
+            commit()
         }
     }
 
+    override fun onClick(p0: View) {
+    }
 
 }

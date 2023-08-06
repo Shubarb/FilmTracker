@@ -1,4 +1,4 @@
-package com.example.filmtracker.view.home.fragment.favoritefragment
+package com.example.filmtracker.view.home.fragment
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

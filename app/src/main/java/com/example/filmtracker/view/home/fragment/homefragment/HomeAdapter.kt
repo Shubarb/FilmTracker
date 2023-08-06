@@ -9,6 +9,7 @@ import com.example.filmtracker.databinding.MovieItemBinding
 import com.example.filmtracker.databinding.MovieItemGridBinding
 import com.example.filmtracker.databinding.MovieItemLoadBinding
 import com.example.filmtracker.databinding.MovieItemLoadGridBinding
+import com.example.filmtracker.models.CastAndCrew
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
 import com.squareup.picasso.Picasso
@@ -17,7 +18,8 @@ class HomeAdapter(
     private var mlistMovie: MutableList<Movie>,
     private var mViewType: Int,
     private var mViewClickListener: View.OnClickListener,
-    private val onClick: (Movie) -> Unit,
+    private val onClickFavorite: (Movie) -> Unit,
+    private val onClick: (Movie)-> Unit,
     private var mIsFavoriteList: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
@@ -41,17 +43,6 @@ class HomeAdapter(
             val lastPosition = mlistMovie.size - 1
             mlistMovie.removeAt(lastPosition)
             notifyDataSetChanged()
-        }
-    }
-
-    fun setupMovieFavorite(listMovieFav: ArrayList<Movie>) {
-        for (i in 0 until mlistMovie.size) {
-            for (j in 0 until listMovieFav.size) {
-                if (mlistMovie[i].id == listMovieFav[j].id) {
-                    mlistMovie[i].isFavorite = false
-                }
-            }
-
         }
     }
 
@@ -167,6 +158,9 @@ class HomeAdapter(
             binding.imgBtn.tag = position
             binding.imgBtn.setOnClickListener{
                 movie.isFavorite != movie.isFavorite
+                onClickFavorite(movie)
+            }
+            binding.movieitem.setOnClickListener {
                 onClick(movie)
             }
         }

@@ -15,8 +15,6 @@ class MovieRepo(application: Application) {
 
     suspend fun addMovieFavourite(movie: Movie) = noteDao.addMovieFavourite(movie)
     suspend fun deleteMovieFavourite(movie: Movie) = noteDao.deleteMovieFavourite(movie)
-
     suspend fun getAllNote(): List<Movie> = noteDao.getAllFavorite()
-    suspend fun getFavorite(): List<Movie> = noteDao.getTickedMovies()
 
 }

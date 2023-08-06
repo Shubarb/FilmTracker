@@ -18,12 +18,8 @@ class FavoriteAdapter(
 
     private var note: List<Movie> = listOf()
 
-    inner class MovieViewHolder(
-//        private var movieList: List<Movie>,
-        private var binding: MovieItemBinding
-        ) : RecyclerView.ViewHolder(binding.root) {
+    inner class MovieViewHolder(private var binding: MovieItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(movie: Movie,position: Int) {
-//            val movie = note[position]
             binding.tvTitle.text = movie.title
             val urlImage = Constants.BASE_IMG_URL + movie.posterPath
             Picasso.get().load(urlImage).into(binding.imgMovie)

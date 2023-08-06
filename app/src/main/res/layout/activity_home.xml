@@ -36,7 +36,7 @@
                     app:mbn_defaultIconColor="@color/defaultIconColor"
                     app:mbn_rippleColor="@color/colorPrimary"
                     app:mbn_selectedIconColor="@color/countBackgroundColor"
-                    app:mbn_shadowColor="@color/shadowColor" />
+                    app:mbn_shadowColor="@color/trans" />
             </RelativeLayout>
         </androidx.drawerlayout.widget.DrawerLayout>
     </RelativeLayout>

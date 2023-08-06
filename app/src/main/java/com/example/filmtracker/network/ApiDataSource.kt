@@ -10,7 +10,7 @@ class ApiDataSource(private val apiService: ApiService) {
         return apiService.getMovieList(movieCategory,apiKey,pageNumber)
     }
 
-//    suspend fun getAllCastCrew(id:Int,apiKey:String): Call<CastAndCrewList>{
-//        return apiService.getCastAndCrew(id,apiKey)
-//    }
+    suspend fun getAllCastCrew(id:Int,apiKey:String): Response<CastAndCrewList>{
+        return apiService.getCastAndCrew(id,apiKey)
+    }
 }

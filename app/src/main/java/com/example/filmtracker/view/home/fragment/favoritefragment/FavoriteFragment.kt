@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.filmtracker.databinding.FragmentFavoriteBinding
 import com.example.filmtracker.models.Movie
+import com.example.filmtracker.view.home.fragment.MovieViewModel
+import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
 
 class FavoriteFragment(
 ) : Fragment() {
@@ -20,7 +22,8 @@ class FavoriteFragment(
 
 
     private val movieViewModel: MovieViewModel by lazy {
-        ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(MovieViewModel::class.java)
+        ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(
+            MovieViewModel::class.java)
     }
 
     override fun onCreateView(
