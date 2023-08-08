@@ -1,9 +1,9 @@
 package com.example.filmtracker.view.home
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -11,23 +11,25 @@ import androidx.lifecycle.ViewModelProvider
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.example.filmtracker.R
 import com.example.filmtracker.databinding.ActivityHomeBinding
+import com.example.filmtracker.models.Constants.Companion.PREFS_NAME
 import com.example.filmtracker.view.home.fragment.accountfragment.AccountFragment
 import com.example.filmtracker.view.home.fragment.favoritefragment.FavoriteFragment
 import com.example.filmtracker.view.home.fragment.MovieViewModel
 import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
+import com.example.filmtracker.view.home.fragment.accountfragment.EditAccountFragment
 import com.example.filmtracker.view.home.fragment.homefragment.HomeFragment
 import com.example.filmtracker.view.home.fragment.messagefragment.MessageFragment
 import com.example.filmtracker.view.home.fragment.settingfragment.SettingFragment
 
 class Home : AppCompatActivity() {
     lateinit var binding: ActivityHomeBinding
-    private lateinit var mDrawerLayout: DrawerLayout
-
+    private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mHomeFragment: HomeFragment
     private lateinit var mfavoriteFragment: FavoriteFragment
     private lateinit var mMessageFragment: MessageFragment
     private lateinit var mAccountFragment: AccountFragment
     private lateinit var mSettingFragment: SettingFragment
+    private lateinit var mEditFragment: EditAccountFragment
 
     private var ID_Home = 1
     private var ID_Favorite = 2
@@ -44,6 +46,7 @@ class Home : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
+        mSharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
 
         //Fragment view
         mHomeFragment = HomeFragment(1)
@@ -51,6 +54,7 @@ class Home : AppCompatActivity() {
         mMessageFragment = MessageFragment()
         mSettingFragment = SettingFragment()
         mAccountFragment = AccountFragment()
+        mEditFragment = EditAccountFragment()
 
         //callback fragment
 
@@ -134,13 +138,13 @@ class Home : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (this.mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            this.mDrawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+//    override fun onBackPressed() {
+//        if (this.mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            this.mDrawerLayout.closeDrawer(GravityCompat.START)
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 
     private fun BottomNavigation() {
         binding.bottomNavigation.add(
@@ -171,6 +175,5 @@ class Home : AppCompatActivity() {
         binding.bottomNavigation.setCount(ID_Message, "4")
 //        binding.bottomNavigation.setCount(ID_Favorite, "${mFavoriteCount}")
     }
-
 
 }

@@ -20,7 +20,6 @@ class FavoriteFragment(
     private lateinit var mMovieAdapter: FavoriteAdapter
     private var listMovie : ArrayList<Movie> = arrayListOf()
 
-
     private val movieViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(
             MovieViewModel::class.java)

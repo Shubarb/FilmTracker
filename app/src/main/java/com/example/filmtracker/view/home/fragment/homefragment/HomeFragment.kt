@@ -136,17 +136,17 @@ class HomeFragment(
                             Movie(0, "0", "0", 0.0, "0", "0", false, false, "0", "0", false)
                         mMovieList.add(loadMoreItem)
                     }
-                    mHomeAdapter.notifyDataSetChanged()
+//                    mHomeAdapter.notifyDataSetChanged()
                     // check favourite movie
                     for (i in mMovieListFavorite) {
                         val same = mMovieList.find { it.id == i.id }
                         if (same != null && !i.isFavorite) {
                             same.isFavorite = true
                             mHomeAdapter.updateData(mMovieList)
-                            Toast.makeText(requireContext(), "Update list", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(requireContext(), "Update list", Toast.LENGTH_SHORT).show()
                         }
                     }
+                    mHomeAdapter.notifyDataSetChanged()
                 }
             }
         }
