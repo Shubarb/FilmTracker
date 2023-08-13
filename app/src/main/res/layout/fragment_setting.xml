@@ -1,14 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
     tools:context=".view.home.fragment.settingfragment.SettingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_15ssp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:textColor="@color/colorAccent"
+        android:text="Filter"
+        android:fontFamily="@font/bangers" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutCategory"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Category"
+            android:textColor="@color/countBackgroundColor"
+            android:fontFamily="@font/bangers"
+            android:textSize="@dimen/_15ssp"
+            android:paddingStart="@dimen/_7sdp"/>
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/txtCate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="Top rate movies"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13ssp"
+            android:paddingStart="@dimen/_7sdp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Movie with rate from"
+            android:textColor="@color/countBackgroundColor"
+            android:fontFamily="@font/bangers"
+            android:textSize="@dimen/_15ssp"
+            android:paddingStart="@dimen/_7sdp"/>
+
+        <TextView
+            android:id="@+id/txtRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="7"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13ssp"
+            android:paddingStart="@dimen/_8sdp"/>
+
+        <SeekBar
+            android:id="@+id/skbRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="10"
+            android:layout_marginTop="@dimen/_10sdp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/layoutRelease"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="from release year"
+            android:textColor="@color/countBackgroundColor"
+            android:fontFamily="@font/bangers"
+            android:textSize="@dimen/_15ssp"
+            android:paddingStart="@dimen/_7sdp"/>
+
+        <TextView
+            android:id="@+id/txtReleaseYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="2023"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13ssp"
+            android:paddingStart="@dimen/_8sdp"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/line"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_15ssp"
+
+        android:layout_marginStart="@dimen/_30sdp"
+        android:textColor="@color/colorAccent"
+        android:text="Sort"
+        android:fontFamily="@font/bangers" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_20sdp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/layoutSort"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sort by"
+                android:textColor="@color/countBackgroundColor"
+                android:fontFamily="@font/bangers"
+                android:textSize="@dimen/_15ssp"
+                android:paddingStart="@dimen/_7sdp"/>
+
+            <TextView
+                android:id="@+id/txtSortBy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:text="Release Date"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_13ssp"
+                android:paddingStart="@dimen/_7sdp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/acceptSetting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_weight="2"
+            android:src="@drawable/updatefilm" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

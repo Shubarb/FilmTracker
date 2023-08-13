@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroup"
+        android:orientation="vertical">
+        <RadioButton
+            android:id="@+id/rdoNone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="None"/>
+
+        <RadioButton
+            android:id="@+id/rdoReleaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Release Date"/>
+
+        <RadioButton
+            android:id="@+id/rdoRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rating"/>
+    </RadioGroup>
+</LinearLayout>

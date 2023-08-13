@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/radioGroup">
+        <RadioButton
+            android:id="@+id/radioOption1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popular Movies"/>
+
+        <RadioButton
+            android:id="@+id/radioOption2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top Rated Movies"/>
+
+        <RadioButton
+            android:id="@+id/radioOption3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Up Coming Movies"/>
+
+        <RadioButton
+            android:id="@+id/radioOption4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Now Playing Movies"/>
+    </RadioGroup>
+
+
+</LinearLayout>
+
+
+
+

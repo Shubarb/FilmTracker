@@ -1,6 +1,7 @@
 package com.example.filmtracker.view.home.fragment.favoritefragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +19,17 @@ class FavoriteFragment(
 
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var mMovieAdapter: FavoriteAdapter
-    private var listMovie : ArrayList<Movie> = arrayListOf()
+    private var listMovie: ArrayList<Movie> = arrayListOf()
 
     private val movieViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(
-            MovieViewModel::class.java)
+            MovieViewModel::class.java
+        )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.e("kiemtra", "Create Favo Frag")
     }
 
     override fun onCreateView(
@@ -31,6 +38,7 @@ class FavoriteFragment(
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+
         val rootView = binding.root
         return rootView
     }
@@ -42,13 +50,13 @@ class FavoriteFragment(
         setHasOptionsMenu(true)
     }
 
-    private fun loadFavoriteList(){
-        mMovieAdapter = FavoriteAdapter(requireActivity(),onDeleteItem)
+    private fun loadFavoriteList() {
+        mMovieAdapter = FavoriteAdapter(requireActivity(), onDeleteItem)
         binding.listRecyclerview.layoutManager = LinearLayoutManager(requireActivity())
         binding.listRecyclerview.setHasFixedSize(true)
         binding.listRecyclerview.adapter = mMovieAdapter
 
-        movieViewModel.movieState.observe(requireActivity()){
+        movieViewModel.movieState.observe(requireActivity()) {
             mMovieAdapter.setNotes(it)
             mMovieAdapter.notifyDataSetChanged()
             listMovie.clear()
@@ -60,7 +68,21 @@ class FavoriteFragment(
         movieViewModel.deleteNote(it)
         listMovie.remove(it)
         mMovieAdapter.setNotes(listMovie)
-        Toast.makeText(requireContext(),"delete ${it.title}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "delete ${it.title}", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("kiemtra", "Destroy Favourite Frag")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("kiemtra", "Pause favo Frag")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("kiemtra", "Stop favo Frag")
+    }
 }

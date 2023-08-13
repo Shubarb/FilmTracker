@@ -1,5 +1,6 @@
 package com.example.filmtracker.view.home.fragment.homefragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +24,9 @@ import com.example.filmtracker.network.Resource
 import com.example.filmtracker.view.home.fragment.MovieViewModel
 import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
 import com.example.filmtracker.view.home.fragment.detailfragment.DetailFragment
+import com.example.filmtracker.view.home.fragment.settingfragment.SettingFragment
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class HomeFragment(
     private var mScreenType: Int
@@ -30,6 +34,7 @@ class HomeFragment(
 
     private lateinit var mMovieList: ArrayList<Movie>
     private lateinit var mMovieListFavorite: ArrayList<Movie>
+
     private var mIsGridview: Boolean = false
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mGridLayoutManager: GridLayoutManager
@@ -37,29 +42,39 @@ class HomeFragment(
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private lateinit var mHomeAdapter: HomeAdapter
     private lateinit var mHandler: Handler
+
     private lateinit var mMovieListType: String
     private var mPage = 1
+    private  var mRatePref: Int = 0
+    private lateinit var mReleaseYearPref: String
+    private lateinit var mSortByPref: String
     private lateinit var convertType: String
+
     private val noteViewModel: MovieViewModel by lazy {
         ViewModelProvider(this, MovieViewModelFactory(requireActivity().getApplication())).get(
             MovieViewModel::class.java
         )
     }
+    private lateinit var mSharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        EventBus.getDefault().register(this)
+        Log.e("kiemtra", "Create home Frag")
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val rootView = binding.root
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        loadDataBySetting()
         val sharedPreferencesDefault =
             PreferenceManager.getDefaultSharedPreferences(requireContext())
         mMovieListType =
             sharedPreferencesDefault.getString(Constant.PREF_CATEGORY_KEY, "upcoming").toString()
         convertType = when (mMovieListType) {
-            "Top rated movies" -> "top_rate"
-            "Up coming movies" -> "upcoming"
+            "Popular Movies" -> "popular"
+            "Top Rated Movies" -> "top_rate"
+            "Up Coming Movies" -> "upcoming"
             else -> "now_playing"
         }
 
@@ -73,6 +88,16 @@ class HomeFragment(
             getListMovieFromApi(false, false)
         }, 1000)
 
+
+        Log.e("home","Category: $convertType")
+        Log.e("home","Rate: $mRatePref")
+        Log.e("home","Release Year: $mReleaseYearPref")
+        Log.e("home","Sort By: $mSortByPref")
+
+        Log.e("checkData", "movie list in fragment: ${mMovieList.size}")
+
+
+
         initObserve()
 
         binding.swipeLayout.setOnRefreshListener {
@@ -85,9 +110,25 @@ class HomeFragment(
         initView()
         SearchClickListener()
         TypeViewCLickListener()
-
+        SettingClickListener()
         loadMore()
         return rootView
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("kiemtra", "Destroy Home Frag")
+        EventBus.getDefault().unregister(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("kiemtra", "Pause Home Frag")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("kiemtra", "Stop Home Frag")
     }
 
     private fun getListMovieFromApi(isRefresh: Boolean, isLoadMore: Boolean) {
@@ -146,6 +187,12 @@ class HomeFragment(
                             Toast.makeText(requireContext(), "Update list", Toast.LENGTH_SHORT).show()
                         }
                     }
+                    mHomeAdapter.setupMovieBySetting(
+                        mMovieList,
+                        mRatePref,
+                        mReleaseYearPref,
+                        mSortByPref
+                    )
                     mHomeAdapter.notifyDataSetChanged()
                 }
             }
@@ -177,16 +224,22 @@ class HomeFragment(
         }
     }
 
-    private fun findById(id: Int): Int {
-        var position = -1
-        val size = mMovieList.size
-        for (i in 0 until size) {
-            if (mMovieList[i].id == id) {
-                position = i
-                break
+    private fun SettingClickListener(){
+        binding.iconSetting.setOnClickListener {
+            val settingFragment = SettingFragment()
+            requireActivity().supportFragmentManager.beginTransaction().apply {
+                replace(R.id.viewPager,settingFragment,Constant.FRAGMENT_DETAIL_TAG)
+                addToBackStack(null)
+                commit()
             }
         }
-        return position
+    }
+
+    private fun loadDataBySetting(){
+        convertType = mSharedPreferences.getString(Constant.PREF_CATEGORY_KEY,"upcoming").toString()
+        mRatePref = mSharedPreferences.getInt(Constant.PREF_RATE_KEY,0)
+        mReleaseYearPref = mSharedPreferences.getString(Constant.PREF_RELEASE_KEY,"").toString()
+        mSortByPref = mSharedPreferences.getString(Constant.PREF_SORT_KEY,"").toString()
     }
 
     private fun changeViewHome() {
@@ -264,6 +317,18 @@ class HomeFragment(
     }
 
     override fun onClick(p0: View) {
+    }
+    private var isUpdate = false
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("checkData", "isUpdate: $isUpdate")
+    }
+
+
+    @Subscribe
+    fun onEventUpcate(event: SettingFragment.UpdateListMovie) {
+        isUpdate = event.isUpdate
     }
 
 }

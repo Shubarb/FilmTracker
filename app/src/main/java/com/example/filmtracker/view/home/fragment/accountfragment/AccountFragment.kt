@@ -23,7 +23,6 @@ import java.lang.Exception
 
 
 class AccountFragment : Fragment() {
-    private var imgBitmap: Bitmap? = null
     private val imgConverter: BitmapConverter = BitmapConverter()
     private lateinit var binding: FragmentAccountBinding
     private lateinit var mSharedPreferences: SharedPreferences
@@ -37,21 +36,7 @@ class AccountFragment : Fragment() {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         loadDataProfile()
         binding.editProfileBtn.setOnClickListener {
-//            val bundle = Bundle()
-//            bundle.putString("name", binding.tvName.text.toString())
-//            bundle.putString("email", binding.txtMailHeaderProfile.text.toString())
-//            bundle.putString("dob", binding.txtDobHeaderProfile.text.toString())
-//            bundle.putString("gender", binding.txtGenderHeaderProfile.text.toString())
-//            try {
-//                bundle.putString(
-//                    "imgBitMapString",
-//                    mSharedPreferences.getString("profileImg", "No data")
-//                )
-//            } catch (e: Exception) {
-//
-//            }
             val editFragment = EditAccountFragment()
-//            editFragment.arguments = bundle
             requireActivity().supportFragmentManager.beginTransaction().apply {
                 replace(R.id.viewPager,editFragment)
                 addToBackStack(null)
@@ -61,25 +46,20 @@ class AccountFragment : Fragment() {
         return rootView
     }
 
-//    fun updateAccountFromEdit(
-//        name: String,
-//        email: String,
-//        dob: String,
-//        gender: String,
-//        imgBitmap: Bitmap?
-//    ) {
-//        val edit = mSharedPreferences.edit()
-//        edit.putString("profileName", name)
-//        edit.putString("profileEmail", email)
-//        edit.putString("profileDob", dob)
-//        edit.putString("profileGender", gender)
-//        if (imgBitmap != null)
-//            edit.putString("profileImg", imgConverter.encodeBase64(imgBitmap))
-//        this.imgBitmap = imgBitmap
-//        binding.imgAvatar.setImageBitmap(imgBitmap)
-//        edit.apply()
-////        loadDataProfile()
-//    }
+    override fun onPause() {
+        super.onPause()
+        Log.e("kiemtra", "pause Account Frag")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("kiemtra", "stop Account Frag")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("kiemtra", "Destroy Account Frag")
+    }
 
     private fun loadDataProfile() {
         binding.tvName.text = mSharedPreferences.getString("profileName", "No data")

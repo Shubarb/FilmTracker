@@ -1,5 +1,6 @@
 package com.example.filmtracker.view.home.fragment.homefragment
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,15 +68,20 @@ class HomeAdapter(
             }
         }
 
-        if (sortBy == "Release Date")
-            listMovie.sortByDescending { it.releaseDate }
-        else if (sortBy == "Rating")
-            listMovie.sortByDescending { it.voteAverage }
+//        if (sortBy == "Release Date")
+//            listMovie.sortByDescending { it.releaseDate }
+//        else if (sortBy == "Rating")
+//            listMovie.sortByDescending { it.voteAverage }
+//        else if (sortBy == "None")
+//            null
 
+        Log.e("checkData", "origin list: ${this.mlistMovie.size}")
+        Log.e("checkData", "list setting: ${listMovie.size}")
         updateData(listMovie)
+        Log.e("checkData", "new list: ${this.mlistMovie.size}")
     }
-
     override fun getItemCount(): Int {
+
         return mlistMovie.size
     }
 
