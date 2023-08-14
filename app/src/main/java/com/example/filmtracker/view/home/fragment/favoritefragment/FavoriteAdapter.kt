@@ -31,11 +31,7 @@ class FavoriteAdapter(
                 binding.imgAdult.visibility = View.GONE
             }
             binding.tvOverview.text = movie.overview
-//            if (movie.isFavorite!!) {
-                binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_rate_24)
-//            } else {
-//                binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_outline_24)
-//            }
+            binding.imgBtn.setImageResource(R.drawable.ic_baseline_star_rate_24)
             binding.imgBtn.tag = position
             binding.imgBtn.setOnClickListener{
                 onDelete(movie)

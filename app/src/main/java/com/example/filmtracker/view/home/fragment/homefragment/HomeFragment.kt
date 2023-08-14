@@ -45,7 +45,7 @@ class HomeFragment(
 
     private lateinit var mMovieListType: String
     private var mPage = 1
-    private  var mRatePref: Int = 0
+    private var mRatePref: Int = 0
     private lateinit var mReleaseYearPref: String
     private lateinit var mSortByPref: String
     private lateinit var convertType: String
@@ -61,8 +61,8 @@ class HomeFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        EventBus.getDefault().register(this)
-        Log.e("kiemtra", "Create home Frag")
+        Log.e("kiemtra","Create Home Frag")
+//        EventBus.getDefault().register(this)
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         val rootView = binding.root
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -81,7 +81,11 @@ class HomeFragment(
         mHandler = Handler(Looper.getMainLooper())
         mMovieList = ArrayList()
         mMovieListFavorite = ArrayList()
-        mHomeAdapter = HomeAdapter(mMovieList, mViewType, this, onClickIconFavorite,onClickMovie, false)
+
+        initObserve()
+
+        mHomeAdapter =
+            HomeAdapter(mMovieList, mViewType, this, onClickIconFavorite, onClickMovie, false)
         mLinearLayoutManager = LinearLayoutManager(activity)
         mGridLayoutManager = GridLayoutManager(activity, 2)
         mHandler.postDelayed({
@@ -89,16 +93,6 @@ class HomeFragment(
         }, 1000)
 
 
-        Log.e("home","Category: $convertType")
-        Log.e("home","Rate: $mRatePref")
-        Log.e("home","Release Year: $mReleaseYearPref")
-        Log.e("home","Sort By: $mSortByPref")
-
-        Log.e("checkData", "movie list in fragment: ${mMovieList.size}")
-
-
-
-        initObserve()
 
         binding.swipeLayout.setOnRefreshListener {
             mHandler.postDelayed({
@@ -106,7 +100,7 @@ class HomeFragment(
                 getListMovieFromApi(true, false)
             }, 1000)
         }
-        noteViewModel.getAllNote()
+        noteViewModel.getAllFavorite()
         initView()
         SearchClickListener()
         TypeViewCLickListener()
@@ -184,7 +178,8 @@ class HomeFragment(
                         if (same != null && !i.isFavorite) {
                             same.isFavorite = true
                             mHomeAdapter.updateData(mMovieList)
-                            Toast.makeText(requireContext(), "Update list", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Update list", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                     mHomeAdapter.setupMovieBySetting(
@@ -224,22 +219,23 @@ class HomeFragment(
         }
     }
 
-    private fun SettingClickListener(){
+    private fun SettingClickListener() {
         binding.iconSetting.setOnClickListener {
             val settingFragment = SettingFragment()
             requireActivity().supportFragmentManager.beginTransaction().apply {
-                replace(R.id.viewPager,settingFragment,Constant.FRAGMENT_DETAIL_TAG)
+                replace(R.id.viewPager, settingFragment, Constant.FRAGMENT_DETAIL_TAG)
                 addToBackStack(null)
                 commit()
             }
         }
     }
 
-    private fun loadDataBySetting(){
-        convertType = mSharedPreferences.getString(Constant.PREF_CATEGORY_KEY,"upcoming").toString()
-        mRatePref = mSharedPreferences.getInt(Constant.PREF_RATE_KEY,0)
-        mReleaseYearPref = mSharedPreferences.getString(Constant.PREF_RELEASE_KEY,"").toString()
-        mSortByPref = mSharedPreferences.getString(Constant.PREF_SORT_KEY,"").toString()
+    private fun loadDataBySetting() {
+        convertType =
+            mSharedPreferences.getString(Constant.PREF_CATEGORY_KEY, "upcoming").toString()
+        mRatePref = mSharedPreferences.getInt(Constant.PREF_RATE_KEY, 0)
+        mReleaseYearPref = mSharedPreferences.getString(Constant.PREF_RELEASE_KEY, "").toString()
+        mSortByPref = mSharedPreferences.getString(Constant.PREF_SORT_KEY, "").toString()
     }
 
     private fun changeViewHome() {
@@ -293,24 +289,24 @@ class HomeFragment(
 
     private val onClickIconFavorite: (Movie) -> Unit = {
         if (it.isFavorite!!) {
-            noteViewModel.deleteNote(it)
+            noteViewModel.deleteFavorite(it)
             Toast.makeText(requireContext(), "delete ${it.title}", Toast.LENGTH_SHORT).show()
             it.isFavorite = false
         } else {
-            noteViewModel.insertNote(it)
+            noteViewModel.insertFavorite(it)
             Toast.makeText(requireContext(), "insert ${it.title}", Toast.LENGTH_SHORT).show()
             it.isFavorite = true
         }
         mHomeAdapter.notifyDataSetChanged()
     }
 
-    private val onClickMovie: (Movie) -> Unit ={
-        val bundle= Bundle()
-        bundle.putSerializable("movieDetail",it)
+    private val onClickMovie: (Movie) -> Unit = {
+        val bundle = Bundle()
+        bundle.putSerializable("movieDetail", it)
         val detailFragment = DetailFragment()
         detailFragment.arguments = bundle
         requireActivity().supportFragmentManager.beginTransaction().apply {
-            replace(R.id.viewPager,detailFragment,Constant.FRAGMENT_DETAIL_TAG)
+            replace(R.id.viewPager, detailFragment, Constant.FRAGMENT_DETAIL_TAG)
             addToBackStack(null)
             commit()
         }
@@ -318,17 +314,20 @@ class HomeFragment(
 
     override fun onClick(p0: View) {
     }
+
     private var isUpdate = false
 
     override fun onResume() {
         super.onResume()
+        initObserve()
+        Log.e("kiemtra","Resume Home frag")
         Log.e("checkData", "isUpdate: $isUpdate")
     }
 
-
-    @Subscribe
-    fun onEventUpcate(event: SettingFragment.UpdateListMovie) {
-        isUpdate = event.isUpdate
-    }
+//
+//    @Subscribe
+//    fun onEventUpcate(event: SettingFragment.UpdateListMovie) {
+//        isUpdate = event.isUpdate
+//    }
 
 }

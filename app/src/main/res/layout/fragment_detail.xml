@@ -135,7 +135,7 @@
                 android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:id="@+id/btn_reminder_detail"
+                android:id="@+id/btnReminderDetail"
                 android:src="@drawable/re"/>
 
             <TextView

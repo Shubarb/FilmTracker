@@ -1,5 +1,7 @@
 package com.example.filmtracker.view.home.fragment.detailfragment
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -19,21 +21,24 @@ import com.example.filmtracker.models.CastAndCrew
 import com.example.filmtracker.models.Constants
 import com.example.filmtracker.models.Movie
 import com.example.filmtracker.network.Resource
+import com.example.filmtracker.utility.NotificationUtil
 import com.example.filmtracker.view.home.fragment.MovieViewModel
 import com.example.filmtracker.view.home.fragment.MovieViewModelFactory
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
-class DetailFragment(
-
-    ) : Fragment(),View.OnClickListener {
+class DetailFragment: Fragment(){
 
     private lateinit var binding: FragmentDetailBinding
     private lateinit var mMovie: Movie
-    private lateinit var mCastAndCrewList: ArrayList<CastAndCrew>
+    private var mCastAndCrewList: ArrayList<CastAndCrew> = arrayListOf()
+    private var listRemind: ArrayList<Movie> = arrayListOf()
     private lateinit var mCastAndCrewAdapter: CastAndCrewAdapter
 
     private var mReminderExisted : Boolean = false
-    private lateinit var mMovieReminder : Movie
+    private var mMovieReminder : Movie? = null
+
 
     private var mSaveDay= 0
     private var mSaveMonth= 0
@@ -57,42 +62,50 @@ class DetailFragment(
         binding = FragmentDetailBinding.inflate(inflater, container, false)
         val rootView = binding.root
 
+        noteViewModel.getAllRemind()
         val bundle = this.arguments
         if(bundle != null){
             mMovie = bundle.getSerializable("movieDetail")as Movie
-//            val movieReminderList = mDataBaseOpenHelper.getReminderMovieID(mMovie.id)
-//            if(movieReminderList.isEmpty()){
-//                mReminderExisted = false
-//            }else{
-//                mReminderExisted = true
-//                mMovieReminder = movieReminderList[0]
-//            }
+            Log.e("movie","Movie receive: ${mMovie!!.reminderTimeDisplay}")
         }
+        initObserve()
 
+        favoriteDetail()
+        remindDetail()
+        initView()
+
+        mHandler = Handler(Looper.getMainLooper())
+        mHandler.postDelayed({
+            getCastAndCrewFromApi()
+        }, 1000)
+
+
+        return rootView
+    }
+
+    private fun remindDetail() {
+        binding.btnReminderDetail.setOnClickListener {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                createReminder()
+            }
+        }
+    }
+
+    private fun favoriteDetail() {
+        Toast.makeText(requireActivity(),"Back To Home Film Tracker To Remove Star",Toast.LENGTH_SHORT).show()
+    }
+
+    private fun initView(){
         if(mMovie.isFavorite){
             binding.btnFavoriteDetail.setImageResource(R.drawable.ic_baseline_star_rate_24)
         }else
             binding.btnFavoriteDetail.setImageResource(R.drawable.ic_baseline_star_outline_24)
-        binding.btnFavoriteDetail.setOnClickListener(this)
-
         binding.txtreleasedetail.text = mMovie.releaseDate
         "${mMovie.voteAverage}/10".also { binding.txtratedetail.text = it }
         val url = Constants.BASE_IMG_URL + mMovie.posterPath
         Picasso.get().load(url).into(binding.imgposterdetail)
         binding.txtoverviewdetail.text = mMovie.overview
 
-        initObserve()
-        mCastAndCrewList = arrayListOf()
-        initView()
-        mHandler = Handler(Looper.getMainLooper())
-        mHandler.postDelayed({
-            getCastAndCrewFromApi()
-        }, 1000)
-
-        return rootView
-    }
-
-    private fun initView(){
         val layoutManager = LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
         mCastAndCrewAdapter = CastAndCrewAdapter(requireActivity(),mCastAndCrewList)
@@ -122,14 +135,85 @@ class DetailFragment(
                 }
             }
         }
+
+        // ArrayList Remind from room
+        noteViewModel.remindState.observe(requireActivity()){
+            listRemind.clear()
+            listRemind.addAll(it)
+            val isCheck: Boolean = listRemind.any{ it.id == mMovie.id}
+            if(isCheck){
+                mReminderExisted = true
+                mMovieReminder = listRemind.firstOrNull { it.id == mMovie.id }
+                if(mReminderExisted){
+                    binding.reminderTimeText.visibility = View.VISIBLE
+                    binding.reminderTimeText.text = mMovieReminder!!.reminderTimeDisplay
+                }else{
+                    binding.reminderTimeText.visibility = View.GONE
+                }
+                Log.e("movie","Movie from list remind: ${mMovieReminder!!.reminderTimeDisplay}")
+            }else{
+                mReminderExisted = false
+                Log.e("movie","Movie isn't exist")
+            }
+        }
     }
 
     private fun getCastAndCrewFromApi() {
         noteViewModel.getCastAndCrew(mMovie.id!!, Constants.API_KEY)
     }
 
-    override fun onClick(p0: View?) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createReminder(){
+        val currentDateTime = Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val startMinute = currentDateTime.get(Calendar.MINUTE)
 
+        DatePickerDialog(requireContext(),{ _,year,month,day ->
+            TimePickerDialog(requireContext(),{_,hour,minute ->
+                val pickedDateTime = Calendar.getInstance()
+                pickedDateTime.set(year,month,day,hour,minute)
+                mSaveYear =year
+                mSaveMonth = month
+                mSaveDay = day
+                mSaveHour = hour
+                mSaveMinute = minute
+                currentDateTime.set(mSaveYear,mSaveMonth,mSaveDay,mSaveHour,mSaveMinute)
+                val reminderTimeInMillis: Long = currentDateTime.timeInMillis
+                val reminderTimeDisplay = "$mSaveYear/${mSaveMonth+1}/$mSaveDay  $mSaveHour:$mSaveMinute"
+                binding.reminderTimeText.visibility = View.VISIBLE
+                binding.reminderTimeText.text = reminderTimeDisplay
+
+                mMovie.reminderTimeDisplay = reminderTimeDisplay
+                mMovie.reminderTime = reminderTimeInMillis.toString()
+
+                if(mReminderExisted){
+                    noteViewModel.removeRemind(mMovie)
+                    noteViewModel.insertRemind(mMovie)
+                    Log.e("lpa","Movie Star after remind: ${mMovie.isFavorite} ")
+                    NotificationUtil().cancelNotification(mMovie.id?:0,requireContext())
+                    NotificationUtil().createNotification(
+                        mMovie,
+                        reminderTimeInMillis,
+                        requireContext()
+                    )
+                    Toast.makeText(context,"update",Toast.LENGTH_SHORT).show()
+
+                }else{
+                    noteViewModel.insertRemind(mMovie)
+                    Log.e("lpa","Movie Star after remind: ${mMovie.isFavorite} ")
+                    NotificationUtil().createNotification(
+                        mMovie,
+                        reminderTimeInMillis,
+                        requireContext()
+                    )
+                    Toast.makeText(context,"Create new",Toast.LENGTH_SHORT).show()
+
+                }
+            },startHour,startMinute,true).show()
+        },startYear,startMonth,startDay).show()
     }
 
 }

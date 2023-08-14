@@ -7,7 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.filmtracker.database.FavoriteDao
-import com.example.filmtracker.database.FavoriteDatabase
+import com.example.filmtracker.database.RemindDao
+import com.example.filmtracker.database.RoomDatabases
 import com.example.filmtracker.models.CastAndCrewList
 import com.example.filmtracker.models.Movie
 import com.example.filmtracker.models.MovieList
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class MovieViewModel(app: Application) : ViewModel() {
     private val noteRepository: MovieRepo = MovieRepo(app)
     private val favoDao: FavoriteDao
+    private val remindDao: RemindDao
     private val apiRepo: ApiRepo = ApiRepo(app)
 
     private val _stateListMovie = MutableLiveData<Resource<MovieList>>()
@@ -27,32 +29,63 @@ class MovieViewModel(app: Application) : ViewModel() {
     private val _stateListDetail = MutableLiveData<Resource<CastAndCrewList>>()
     val stateListDetail: LiveData<Resource<CastAndCrewList>> = _stateListDetail
 
+
+    // Room Favorite
     val countLiveData: LiveData<Int>
     init {
-        val db = FavoriteDatabase.getInstance(app)
+        val db = RoomDatabases.getInstance(app)
         favoDao = db.getNoteDao()
         countLiveData = favoDao.getCount()
     }
 
     var movieState = MutableLiveData<List<Movie>>()
-    fun insertNote(note: Movie) {
+    fun insertFavorite(note: Movie) {
         viewModelScope.launch {
             noteRepository.addMovieFavourite(note)
             movieState.value = noteRepository.getAllNote()
         }
     }
 
-    fun deleteNote(note: Movie) = viewModelScope.launch {
+    fun deleteFavorite(note: Movie) = viewModelScope.launch {
         noteRepository.deleteMovieFavourite(note)
+        movieState.value = noteRepository.getAllNote()
     }
 
-    fun getAllNote() {
+    fun getAllFavorite() {
         viewModelScope.launch {
             movieState.value = noteRepository.getAllNote()
         }
-
     }
 
+
+    // Room Remind
+    val counttLivesData: LiveData<Int>
+    init {
+        val db = RoomDatabases.getInstance(app)
+        remindDao = db.getRemindDao()
+        counttLivesData = remindDao.getCount()
+    }
+
+    var remindState = MutableLiveData<List<Movie>>()
+    fun insertRemind(movie: Movie){
+        viewModelScope.launch {
+            noteRepository.addMovieRemind(movie)
+            remindState.value = noteRepository.getAllRemind()
+        }
+    }
+
+    fun removeRemind(movie: Movie){
+        viewModelScope.launch {
+            noteRepository.removeMovieRemind(movie)
+            remindState.value = noteRepository.getAllRemind()
+        }
+    }
+
+    fun getAllRemind(){
+        viewModelScope.launch{
+            remindState.value = noteRepository.getAllRemind()
+        }
+    }
 
     fun getAllMovie(movieCategory: String, apiKey: String, pageNumber: String) {
         viewModelScope.launch {

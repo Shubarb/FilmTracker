@@ -1,22 +1,23 @@
 package com.example.filmtracker.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
-import com.example.filmtracker.models.DetailMovie
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 import com.example.filmtracker.models.Movie
 
 @Dao
-interface FavoriteDao {
+interface RemindDao {
     @Insert
-    suspend fun addMovieFavourite(movie: Movie)
+    suspend fun addMovieRemind(movie: Movie)
 
     @Delete
-    suspend fun deleteMovieFavourite(movie: Movie)
+    suspend fun deleteMovieRemind(movie: Movie)
 
     @Query("SELECT * FROM table_movie_1")
-    suspend fun getAllFavorite(): List<Movie>
+    suspend fun getAllRemind(): List<Movie>
 
     @Query("SELECT COUNT(*) FROM table_movie_1")
     fun getCount(): LiveData<Int>
-
 }

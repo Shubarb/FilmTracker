@@ -45,7 +45,7 @@ class FavoriteFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        movieViewModel.getAllNote()
+        movieViewModel.getAllFavorite()
         loadFavoriteList()
         setHasOptionsMenu(true)
     }
@@ -65,7 +65,7 @@ class FavoriteFragment(
     }
 
     private val onDeleteItem: (Movie) -> Unit = {
-        movieViewModel.deleteNote(it)
+        movieViewModel.deleteFavorite(it)
         listMovie.remove(it)
         mMovieAdapter.setNotes(listMovie)
         Toast.makeText(requireContext(), "delete ${it.title}", Toast.LENGTH_SHORT).show()
